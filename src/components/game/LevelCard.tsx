@@ -4,22 +4,20 @@ import { Play } from "lucide-react";
 interface LevelCardProps {
   level: Level;
   onClick: () => void;
-  delay?: number;
 }
 
-export const LevelCard = ({ level, onClick, delay = 0 }: LevelCardProps) => {
+export const LevelCard = ({ level, onClick }: LevelCardProps) => {
   return (
     <button
       onClick={onClick}
-      className="game-card group text-left w-full animate-fade-in"
-      style={{ animationDelay: `${delay}s` }}
+      className="w-full text-left bg-card hover:bg-card/90 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group"
     >
       <div className="flex items-start gap-4">
         <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${level.color} flex items-center justify-center text-3xl shadow-md group-hover:scale-110 transition-transform duration-300`}>
           {level.icon}
         </div>
         <div className="flex-1">
-          <h3 className="text-xl font-display font-bold text-foreground mb-1 group-hover:text-primary transition-colors">
+          <h3 className="text-xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">
             {level.title}
           </h3>
           <p className="text-muted-foreground text-sm mb-2">

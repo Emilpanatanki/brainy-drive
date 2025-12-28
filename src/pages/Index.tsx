@@ -1,71 +1,71 @@
 import { useState } from "react";
-import { levels, Level } from "@/data/levels";
-import { MainMenu } from "@/components/game/MainMenu";
-import { GameCanvas } from "@/components/game/GameCanvas";
-import { WinScreen } from "@/components/game/WinScreen";
 import { Helmet } from "react-helmet";
+import { MainMenu } from "@/components/game/MainMenu";
+import { Game3D } from "@/components/game/Game3D";
+import { WinScreen } from "@/components/game/WinScreen";
+import { levels, Level } from "@/data/levels";
 
 type GameState = "menu" | "playing" | "complete";
 
-interface GameData {
-  level: Level;
-  answers: { question: string; userAnswer: string; correct: boolean }[];
+interface GameResult {
+  junction: number;
+  correct: boolean;
+  answer: string;
 }
 
 const Index = () => {
   const [gameState, setGameState] = useState<GameState>("menu");
-  const [gameData, setGameData] = useState<GameData | null>(null);
+  const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
+  const [results, setResults] = useState<GameResult[]>([]);
 
-  const handleSelectLevel = (levelId: string) => {
-    const level = levels.find(l => l.id === levelId);
-    if (level) {
-      setGameData({ level, answers: [] });
-      setGameState("playing");
-    }
+  const handleStartLevel = (level: Level) => {
+    setSelectedLevel(level);
+    setResults([]);
+    setGameState("playing");
   };
 
-  const handleComplete = (answers: { question: string; userAnswer: string; correct: boolean }[]) => {
-    if (gameData) {
-      setGameData({ ...gameData, answers });
-      setGameState("complete");
-    }
+  const handleComplete = (gameResults: GameResult[]) => {
+    setResults(gameResults);
+    setGameState("complete");
   };
 
   const handleRestart = () => {
-    if (gameData) {
-      setGameData({ level: gameData.level, answers: [] });
-      setGameState("playing");
-    }
+    setResults([]);
+    setGameState("playing");
   };
 
   const handleMainMenu = () => {
+    setSelectedLevel(null);
+    setResults([]);
     setGameState("menu");
-    setGameData(null);
   };
 
   return (
     <>
       <Helmet>
-        <title>MedRace - Educational Racing Game for Medical Students</title>
-        <meta name="description" content="Learn emergency medicine through an interactive racing game. Master pulmonary embolism, myocardial infarction, appendicitis, and stroke diagnosis." />
+        <title>MedRace 3D - Medical Education Racing Game</title>
+        <meta 
+          name="description" 
+          content="Learn medicine through an exciting 3D racing game. Navigate through medical scenarios and make the right diagnostic and treatment decisions!" 
+        />
       </Helmet>
-      
+
       {gameState === "menu" && (
-        <MainMenu onSelectLevel={handleSelectLevel} />
+        <MainMenu levels={levels} onSelectLevel={handleStartLevel} />
       )}
-      
-      {gameState === "playing" && gameData && (
-        <GameCanvas
-          level={gameData.level}
+
+      {gameState === "playing" && selectedLevel && (
+        <Game3D
+          level={selectedLevel}
           onComplete={handleComplete}
-          onExit={handleMainMenu}
+          onRestart={handleRestart}
         />
       )}
-      
-      {gameState === "complete" && gameData && (
+
+      {gameState === "complete" && selectedLevel && (
         <WinScreen
-          level={gameData.level}
-          answers={gameData.answers}
+          level={selectedLevel}
+          results={results}
           onRestart={handleRestart}
           onMainMenu={handleMainMenu}
         />
