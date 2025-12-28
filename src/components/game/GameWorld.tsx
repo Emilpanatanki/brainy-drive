@@ -276,13 +276,21 @@ export const GameWorld = ({ level, onComplete, onRestart }: GameWorldProps) => {
                 </group>
               )}
               
-              {/* Wrong path barrier (appears after passing) */}
-              {!choice.isCorrect && currentJunction > jIndex && (
-                <mesh position={[choice.lane * laneWidth, 1, -15]}>
-                  <boxGeometry args={[laneWidth, 2, 0.5]} />
-                  <meshStandardMaterial color="#8B4513" />
-                </mesh>
-              )}
+              {/* Wrong path barrier (always visible before entering a wrong lane) */}
+{!choice.isCorrect && (
+  <mesh
+    position={[
+      choice.lane * laneWidth,      // X = lane position
+      1,                            // Y height
+      junctionZ - 8                 // Z placed just inside the wrong path
+    ]}
+    castShadow
+  >
+    <boxGeometry args={[laneWidth * 0.9, 1.5, 0.6]} />  {/* width, height, depth */}
+    <meshStandardMaterial color="#A30000" />            {/* 🚧 warning red */}
+  </mesh>
+)}
+
             </group>
           ))}
           
